@@ -11,7 +11,7 @@ class InitialScreen extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: const [
             CircularProgressIndicator.adaptive(),
-            Text('loading resources...'),
+            Text('data preparing...'),
           ],
         ),
       ),

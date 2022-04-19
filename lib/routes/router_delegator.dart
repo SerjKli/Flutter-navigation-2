@@ -20,9 +20,11 @@ class AppRouteDelegator extends RouterDelegate with ChangeNotifier, PopNavigator
 
   /// Emulate getting data from remote API or local storage
   Future<void> _initApp() async {
-    await Future.delayed(const Duration(milliseconds: 300));
+    if (_isInit) return;
 
     /// Random delay
+    await Future.delayed(const Duration(milliseconds: 300));
+
     _isInit = true;
     notifyListeners();
   }

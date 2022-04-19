@@ -1,12 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_navigation_2/models/ItemModel.dart';
+import 'package:flutter_navigation_2/providers/MainProvider.dart';
+import 'package:flutter_navigation_2/widgets/loading.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 class MainScreen extends StatelessWidget {
-  final List<String> _options = const [
-    "Apple",
-    "Banana",
-    "Orange",
-    "Peach",
-  ];
   final Function(String) onOptionSelected;
 
   const MainScreen({
@@ -23,16 +21,26 @@ class MainScreen extends StatelessWidget {
       ),
       body: Padding(
         padding: const EdgeInsets.all(4.0),
-        child: GridView.count(
-          crossAxisCount: 2,
-          children: [
-            ..._options
-                .map((option) => _OptionWidget(
-                      title: option,
-                      onOptionSelected: onOptionSelected,
-                    ))
-                .toList(),
-          ],
+        child: Consumer(
+          builder: (BuildContext context, WidgetRef ref, _) {
+            final ItemNotifier _itemProvider = ref.watch(itemProvider);
+
+            if (_itemProvider.isLoading) return const AppLoading(text: "items loading");
+
+            final List<ItemModel> _items = _itemProvider.items;
+
+            return GridView.count(
+              crossAxisCount: 2,
+              children: [
+                ..._items
+                    .map((option) => _OptionWidget(
+                          title: option.title,
+                          onOptionSelected: onOptionSelected,
+                        ))
+                    .toList(),
+              ],
+            );
+          },
         ),
       ),
     );
