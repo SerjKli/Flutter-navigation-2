@@ -1,16 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_navigation_2/models/ItemModel.dart';
-import 'package:flutter_navigation_2/providers/MainProvider.dart';
-import 'package:flutter_navigation_2/widgets/loading.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
-class MainScreen extends StatelessWidget {
-  final Function(String) onOptionSelected;
+import 'package:flutter_navigation_2/models/ItemModel.dart';
+import 'package:flutter_navigation_2/providers/ItemProvider.dart';
+import 'package:flutter_navigation_2/widgets/loading.dart';
 
-  const MainScreen({
-    Key? key,
-    required this.onOptionSelected,
-  }) : super(key: key);
+class MainScreen extends StatelessWidget {
+  const MainScreen({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -30,12 +26,11 @@ class MainScreen extends StatelessWidget {
             final List<ItemModel> _items = _itemProvider.items;
 
             return GridView.count(
-              crossAxisCount: 2,
+              crossAxisCount: 4,
               children: [
                 ..._items
                     .map((option) => _OptionWidget(
                           title: option.title,
-                          onOptionSelected: onOptionSelected,
                         ))
                     .toList(),
               ],
@@ -49,11 +44,9 @@ class MainScreen extends StatelessWidget {
 
 class _OptionWidget extends StatelessWidget {
   final String title;
-  final Function onOptionSelected;
   const _OptionWidget({
     Key? key,
     required this.title,
-    required this.onOptionSelected,
   }) : super(key: key);
 
   @override
@@ -62,15 +55,23 @@ class _OptionWidget extends StatelessWidget {
       padding: const EdgeInsets.all(8.0),
       child: Container(
         color: Colors.blue,
-        child: InkWell(
-          onTap: () {
-            onOptionSelected(title);
+        child: Consumer(
+          builder: (ctx, ref, child) {
+            final _itemProvider = ref.read(itemProvider);
+            return InkWell(
+              onTap: () {
+                _itemProvider.selectedTitle = title;
+              },
+              child: child,
+            );
           },
           child: Center(
-            child: Text(title,
-                style: const TextStyle(
-                  color: Colors.white,
-                )),
+            child: Text(
+              title,
+              style: const TextStyle(
+                color: Colors.white,
+              ),
+            ),
           ),
         ),
       ),

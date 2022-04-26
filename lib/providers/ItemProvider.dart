@@ -12,12 +12,20 @@ class ItemNotifier with ChangeNotifier {
   LoadingStatus _loadingStatus = LoadingStatus.init;
   final ItemRepoContract itemRepo;
   List<ItemModel> _items = [];
+  String? _selectedTitle;
 
   ItemNotifier() : itemRepo = ItemRepoFake() {
-    debugPrint("ItemNotifier constructor");
     if (_loadingStatus == LoadingStatus.init) {
       _loadItems();
     }
+  }
+
+  ItemModel? get selectedItem {
+    if(_selectedTitle == null || _items.isEmpty) return null;
+    final List<ItemModel> _item = _items.where((element) => element.title.toLowerCase() ==
+    _selectedTitle!.toLowerCase()).toList();
+    if(_items.isEmpty) return null;
+    return _item.first;
   }
 
   bool get isLoading => _loadingStatus == LoadingStatus.loading;
@@ -25,6 +33,11 @@ class ItemNotifier with ChangeNotifier {
 
   set loadingStatus(LoadingStatus newStatus) {
     _loadingStatus = newStatus;
+    notifyListeners();
+  }
+
+  set selectedTitle(String? title){
+    _selectedTitle = title;
     notifyListeners();
   }
 
